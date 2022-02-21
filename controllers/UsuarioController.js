@@ -1,4 +1,6 @@
 const { Usuario } = require("../models/index");
+const bcrypt = require("bcrypt");
+const authConfig = require("../config/auth");
 
 const UsuarioController = {};
 
@@ -34,6 +36,10 @@ UsuarioController.registraUsuario = async (req, res) => {
     let surname = req.body.surname;
     let nickname = req.body.nickname;
     let email = req.body.email;
+    let password = bcrypt.hashSync(
+      req.body.password,
+      Number.parseInt(authConfig.rounds)
+    );
 
     //Comprobación de errores.....
 
@@ -44,10 +50,54 @@ UsuarioController.registraUsuario = async (req, res) => {
       age: age,
       surname: surname,
       email: email,
+      password: password,
       nickname: nickname,
     }).then((usuario) => {
       console.log("este es mi amigo", usuario);
       res.send(`${usuario.name}, bienvenida a este infierno`);
+    });
+  } catch (error) {
+    res.send(error);
+  }
+};
+
+UsuarioController.updateProfile = async (req, res) => {
+  let datos = req.body;
+
+  let id = req.params.id;
+
+  try {
+    Usuario.update(datos, {
+      where: { id: id },
+    }).then((actualizado) => {
+      res.send(actualizado);
+    });
+  } catch (error) {}
+};
+
+UsuarioController.deleteAll = async (req, res) => {
+  try {
+    Usuario.destroy({
+      where: {},
+      truncate: false,
+    }).then((usuariosEliminados) => {
+      res.send(`Se han eliminado ${usuariosEliminados} usuarios`);
+    });
+  } catch (error) {
+    res.send(error);
+  }
+};
+
+UsuarioController.deleteById = async (req, res) => {
+  let id = req.params.id;
+
+  try {
+    Usuario.destroy({
+      where: { id: id },
+      truncate: false,
+    }).then((usuarioEliminado) => {
+      console.log(usuarioEliminado);
+      res.send(`El usuario con la id ${id} ha sido eliminado`);
     });
   } catch (error) {
     res.send(error);
