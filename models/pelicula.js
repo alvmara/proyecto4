@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // define association here
       this.hasMany(models.pedido, {
         foreignKey: "peliculaId",
       });
@@ -18,8 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       titulo: DataTypes.STRING,
       sinopsis: DataTypes.STRING,
       adult: DataTypes.BOOLEAN,
+      popularity: DataTypes.FLOAT,
       image: DataTypes.STRING,
-      fecha: DataTypes.STRING,
+      fecha: DataTypes.DATE,
     },
     {
       sequelize,
